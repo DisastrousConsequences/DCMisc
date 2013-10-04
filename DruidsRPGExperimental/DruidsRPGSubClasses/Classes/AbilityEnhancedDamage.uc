@@ -1,0 +1,34 @@
+class AbilityEnhancedDamage extends RPGAbility
+	config(UT2004RPG) 
+	abstract;
+
+var config int RequiredLevel;
+var config float LevMultiplier;
+
+static simulated function int Cost(RPGPlayerDataObject Data, int CurrentLevel)
+{
+	if(Data.Level < (default.RequiredLevel + CurrentLevel))
+		return 0;
+
+	return Super.Cost(Data, CurrentLevel);
+}
+
+static function HandleDamage(out int Damage, Pawn Injured, Pawn Instigator, out vector Momentum, class<DamageType> DamageType, bool bOwnedByInstigator, int AbilityLevel)
+{
+	if(!bOwnedByInstigator)
+		return;
+	if(Damage > 0)
+		Damage *= (1 + (AbilityLevel * default.LevMultiplier));
+}
+
+DefaultProperties
+{
+	AbilityName="Advanced Damage Bonus"
+	Description="Increases your cumulative total damage bonus by 1.5% per level. |Cost (per level): 5. You must be level 75 to purchase the first level of this ability, level 76 to purchase the second level, and so on."
+	
+	LevMultiplier=0.015000
+	RequiredLevel=75
+	StartingCost=5
+	CostAddPerLevel=0
+	MaxLevel=20
+}
